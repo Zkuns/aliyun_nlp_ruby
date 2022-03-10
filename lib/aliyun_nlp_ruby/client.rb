@@ -13,11 +13,12 @@ module AliyunNlpRuby
       params_without_sig = build_params(params.merge(intrinsic_params))
       params_full= "Signature=#{sign(params_without_sig)}&#{params_without_sig}"
 
-      response = Faraday.get "#{SERVICE_URL}?#{params_full}",
+      response = Faraday.get "#{SERVICE_URL}?#{params_full}"
       if response != 200 && defined? Rails
         Rails.logger.error(response.body)
       end
-      JSON.parse(response.body)
+      data = JSON.parse(response.body).dig('Data') || ''
+      JSON.parse(data).dig('result')
     end
 
     private
